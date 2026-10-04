@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pour Cassie 💌</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ece6ff;--ink:#2b1b4a;--pink:#ff4f8b;--sun:#ffd86b;--paper:#fffaf3}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Fredoka,"Trebuchet MS",sans-serif;display:flex;align-items:center;justify-content:center;padding:16px;overflow-x:hidden}
+.screen{display:none;width:100%;max-width:460px;text-align:center}
+.screen.on{display:block}
+button{font:inherit;cursor:pointer;border:0}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+
+/* enveloppe */
+.env{position:relative;width:280px;height:190px;margin:0 auto;background:var(--pink);border-radius:8px;box-shadow:0 10px 0 #c93a6b;transition:transform .3s}
+.env:hover{transform:rotate(-2deg) scale(1.03)}
+.env .flap{position:absolute;inset:0 0 auto 0;height:100px;background:#ff7aa6;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .6s;border-radius:8px 8px 0 0}
+.env.open .flap{transform:rotateX(180deg)}
+.env .to{position:absolute;bottom:22px;width:100%;font-size:1.6rem;font-weight:700;color:#fff}
+.hint{margin-top:34px;font-size:1.1rem}
+
+/* carte */
+.card{background:var(--paper);border-radius:20px;padding:28px 20px 24px;box-shadow:0 10px 0 rgba(43,27,74,.15);border:3px solid var(--ink)}
+h1{font-size:clamp(1.7rem,7vw,2.3rem);margin:0 0 6px;line-height:1.15}
+.sub{margin:0 0 20px}
+.bubble{min-height:3em;margin:0 0 14px;font-weight:600;color:var(--pink)}
+.row{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;min-height:90px}
+#yes{background:var(--pink);color:#fff;font-weight:700;font-size:1.2rem;padding:.6em 1.4em;border-radius:999px;box-shadow:0 5px 0 #c93a6b;transition:font-size .25s;max-width:100%}
+#no{background:#fff;color:var(--ink);border:2px solid var(--ink);font-size:1.1rem;padding:.55em 1.2em;border-radius:999px;transition:left .15s,top .15s;z-index:5}
+
+/* choix */
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0}
+.chips label{cursor:pointer}
+.chips input{position:absolute;opacity:0}
+.chips span{display:inline-block;padding:.5em 1em;border-radius:999px;border:2px solid var(--ink);background:#fff;transition:background .15s}
+.chips input:checked+span{background:var(--sun);font-weight:600}
+.chips input:focus-visible+span{outline:3px solid var(--ink);outline-offset:2px}
+textarea{width:100%;min-height:110px;border-radius:14px;border:2px solid var(--ink);padding:12px;font:inherit;background:#fff;resize:vertical}
+#send{margin-top:14px;background:var(--ink);color:#fff;padding:.7em 1.6em;border-radius:999px;font-weight:600;font-size:1.1rem}
+#send:disabled{opacity:.5}
+.err{color:#b00020;min-height:1.3em;margin:8px 0 0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- 1. Enveloppe -->
+<section class="screen on" id="s1">
+  <button class="env" id="env" aria-label="Ouvrir la lettre">
+    <div class="flap"></div>
+    <div class="to">Pour Cassie 💌</div>
+  </button>
+  <p class="hint">Clique sur la lettre pour l'ouvrir</p>
+</section>
+
+<!-- 2. La question -->
+<section class="screen" id="s2">
+  <div class="card">
+    <h1>Cassie, tu veux aller en date avec moi ? 🥺</h1>
+    <p class="sub">Réfléchis bien à ta réponse…</p>
+    <p class="bubble" id="bubble" aria-live="polite"></p>
+    <div class="row">
+      <button id="yes">Oui 💖</button>
+      <button id="no">Non</button>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Choix du date -->
+<section class="screen" id="s3">
+  <div class="card">
+    <h1>Yesss ! 🎉</h1>
+    <p class="sub">On fait quoi ? Choisis ce que tu veux (tu peux en prendre plusieurs).</p>
+    <div class="chips" id="chips">
+      <label><input type="checkbox" value="Trampoline Park"><span>🤸 Trampoline Park</span></label>
+      <label><input type="checkbox" value="Mini golf"><span>⛳ Mini golf</span></label>
+      <label><input type="checkbox" value="Ciné"><span>🎬 Ciné</span></label>
+      <label><input type="checkbox" value="Bowling"><span>🎳 Bowling</span></label>
+      <label><input type="checkbox" value="Resto"><span>🍕 Resto</span></label>
+      <label><input type="checkbox" value="Balade et glace"><span>🍦 Balade &amp; glace</span></label>
+    </div>
+    <textarea id="text" placeholder="Écris-moi ce que tu veux : une autre idée, un jour qui t'arrange, un message…"></textarea>
+    <p class="err" id="err" role="alert"></p>
+    <button id="send">Envoyer ma réponse 💌</button>
+  </div>
+</section>
+
+<!-- 4. Merci -->
+<section class="screen" id="s4">
+  <div class="card">
+    <h1>C'est envoyé ! 💖</h1>
+    <p class="sub">J'ai reçu ta réponse. J'ai hâte !</p>
+  </div>
+</section>
+
+<script>
+// ⚠️ À MODIFIER : colle ici ton lien Formspree (voir les étapes dans la conversation)
+const FORM_URL = "https://formspree.io/f/xdeanygk";
+
+const $ = id => document.getElementById(id);
+const show = id => { document.querySelectorAll('.screen').forEach(s => s.classList.remove('on')); $(id).classList.add('on'); };
+
+// 1. Ouvrir l'enveloppe
+$('env').addEventListener('click', () => {
+  $('env').classList.add('open');
+  setTimeout(() => show('s2'), 800);
+});
+
+// 2. Le bouton "Non" qui fuit
+const msgs = [
+  "Hé, le bouton est en train de s'échapper 👀",
+  "Raté ! Trop lent 😏",
+  "Tu es sûre ? Réfléchis bien…",
+  "Le « non » a peur de toi",
+  "Allez, réessaie, je t'attends",
+  "Le « non » est en maintenance 🔧",
+  "Cassie… 🥺",
+  "Regarde comme le « oui » grandit, il t'aime bien",
+  "Le « non » a demandé sa mutation",
+  "Dernier avertissement : le oui va tout manger",
+  "Le « non » a quitté la conversation",
+  "Tu peux arrêter, le oui gagne toujours 😌"
+];
+let n = 0;
+function dodge(e) {
+  e.preventDefault();
+  const no = $('no'), yes = $('yes');
+  n++;
+  $('bubble').textContent = msgs[Math.min(n - 1, msgs.length - 1)];
+  no.style.position = 'fixed';
+  const w = no.offsetWidth, h = no.offsetHeight;
+  no.style.left = (8 + Math.random() * (window.innerWidth - w - 16)) + 'px';
+  no.style.top = (8 + Math.random() * (window.innerHeight - h - 16)) + 'px';
+  yes.style.fontSize = Math.min(1.2 + n * 0.5, 9) + 'rem';
+  no.style.fontSize = Math.max(1.1 - n * 0.06, 0.6) + 'rem';
+}
+$('no').addEventListener('pointerenter', dodge);
+$('no').addEventListener('pointerdown', dodge);
+$('no').addEventListener('click', dodge);
+$('yes').addEventListener('click', () => show('s3'));
+
+// 3. Envoi de la réponse
+$('send').addEventListener('click', async () => {
+  const picks = [...document.querySelectorAll('#chips input:checked')].map(i => i.value);
+  const text = $('text').value.trim();
+  $('err').textContent = '';
+  if (!picks.length && !text) { $('err').textContent = "Choisis au moins une idée ou écris-moi un message 🙂"; return; }
+  $('send').disabled = true;
+  try {
+    const r = await fetch(FORM_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        reponse: "OUI 💖",
+        idees_de_date: picks.join(', ') || '(aucune cochée)',
+        message: text || '(pas de message)',
+        tentatives_sur_non: n
+      })
+    });
+    if (!r.ok) throw new Error();
+    show('s4');
+  } catch (e) {
+    $('err').textContent = "Oups, l'envoi n'a pas marché. Réessaie ou dis-le-moi directement 😅";
+    $('send').disabled = false;
+  }
+});
+</script>
+</body>
+</html>
